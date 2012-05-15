@@ -4,10 +4,11 @@ var app = require('./config')
   , io = require('socket.io').listen(app)
   , fs = require('fs');
 
-app.listen(process.env.PORT || 3000);
-
 var client = null
-  , device = null;
+  , device = null
+  , port = process.env.PORT || 3000;
+
+app.listen(port);
 
 io.sockets.on('connection', function (socket) {
   socket.on('set-role', function(role) {
