@@ -1,0 +1,13 @@
+{
+  "name": "phonegap_emulator",
+  "description": "example chat application with socket.io",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "2.5.9",
+    "connect-form": "0.2.1",
+    "ejs": "0.4.3",
+    "websocket.io": "0.1.6",
+    "socket.io": "0.9.6",
+    "qrcode": "0.1.1"
+  }
+}

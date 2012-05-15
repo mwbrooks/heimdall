@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="jquery.qrcode.min.js"></script>
+    <script>
+
+  var socket = io.connect('ws://127.0.0.1:3000');
+
+  socket.emit('set-role', 'client');
+
+  $(function() {
+    $('#getCurrentPosition').click( function() {
+      getCurrentPosition(function(data) {alert('got position')});
+    });
+    $('#showQRCode').click( function() {
+      $('#qrcode').qrcode("this plugin is great");
+    });
+    $('#captureImage').click( function() {
+      captureImage(function(data) {alert('got image')});
+    });
+  });
+
+  var getCurrentPosition = function(callback) {
+    socket.emit('get-current-position', { foo: 'bar' }, function(data) {
+      console.log(data);
+      callback(data);
+    });
+  };
+
+  var captureImage = function(callback) {
+    console.log('capture image');
+    socket.emit('capture-image', { foo: 'bar' }, function(data) {
+      console.log('capture image before callback');
+      callback(data);
+    });
+  }
+    </script>
+  </head>
+  <body>
+    <div>
+      <a href="#" id="showQRCode">show qr code</a>
+      <div id="qrcode"></div>
+    </div>
+    <li><a href="#" id="getCurrentPosition">navigator.geolocation.getCurrentPosition</a>
+    <li><a href="#" id="captureImage">navigator.device.capture.captureImage</a>
+  </body>
+</html>
