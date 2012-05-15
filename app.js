@@ -4,7 +4,7 @@ var app = require('./config')
   , io = require('socket.io').listen(app)
   , fs = require('fs');
 
-app.listen(process.env.PORT || 7888);
+app.listen(process.env.PORT || 3000);
 
 var client = null
   , device = null;

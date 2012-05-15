@@ -6,7 +6,10 @@
     <script src="jquery.qrcode.min.js"></script>
     <script>
 
-  var socket = io.connect('ws://127.0.0.1:3000');
+  var ip = window.location.hostname
+  ,   port = window.location.port
+
+  var socket = io.connect('ws://'+ip+':'+port);
 
   socket.emit('set-role', 'client');
 
