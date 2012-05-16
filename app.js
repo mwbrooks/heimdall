@@ -8,6 +8,21 @@ var client = null
   , device = null
   , port = process.env.PORT || 3000;
 
+app.post('/', function(req, res, next) {
+    console.log('start upload');
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "X-Requested-With")
+    req.form.complete(function(err, fields, files) {
+        console.log('complete upload');
+        if (err) 
+          next(err)
+        else {
+          res.writeHead(200, {});
+          res.end();
+        }
+    })
+})
+
 app.listen(port);
 
 io.sockets.on('connection', function (socket) {
@@ -37,36 +52,4 @@ function run() {
 
   client.on('disconnect', function() { client = null });
   device.on('disconnect', function() { device = null });
-}
-
-function handler(req, res) {
-  var uri = url.parse(req.url).pathname
-    , filename = path.join(process.cwd(), uri);
-
-
- 
-  path.exists(filename, function(exists) {
-    if(!exists) {
-      res.writeHead(404, {"Content-Type": "text/plain"});
-      res.write("404 Not Found\n");
-      res.end();
-      return;
-    }
-
-    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
-
-    fs.readFile(filename, "binary", function(err, file) {
-      if(err) {        
-        res.writeHead(500, {"Content-Type": "text/plain"});
-        res.write(err + "\n");
-        res.end();
-        return;
-      }
-
-      res.writeHead(200);
-      res.write(file, "binary");
-      res.end();
-    });
-  });
-
 }
