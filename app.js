@@ -34,6 +34,9 @@ function run() {
       console.log('captured-image with data: ' + JSON.stringify(data));
     });
   });
+
+  client.on('disconnect', function() { client = null });
+  device.on('disconnect', function() { device = null });
 }
 
 function handler(req, res) {
