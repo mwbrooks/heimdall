@@ -1,0 +1,7 @@
+node app.js
+android update project -p .
+replace <port/> 3000
+replace <ip/> ./ip
+ant debug install
+adb shell am start -n com.phonegap/.PhoneGapDeveloperActivity
+/usr/bin/open -a "/Applications/Google Chrome.app" 'http://ip:port/'

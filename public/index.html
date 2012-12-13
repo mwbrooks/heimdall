@@ -1,52 +1,63 @@
 <!DOCTYPE HTML>
 <html>
   <head>
+	<style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+    </style>
+	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDMkfTBvbioZ6g8owRTUWeo5mgPTztNl7A&sensor=false"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="proxy.js"></script>
     <script src="jquery.qrcode.min.js"></script>
     <script>
 
-  var hostname = window.location.hostname
+  var map
+  ,   hostname = window.location.hostname
   ,   port = window.location.port
+  ,   socket = io.connect('ws://'+hostname+':'+port)
 
-  var socket = io.connect('ws://'+hostname+':'+port);
-
-  socket.emit('set-role', 'client');
+  socket.emit('set-role', 'client')
 
   $(function() {
     $('#getCurrentPosition').click( function() {
-      getCurrentPosition(function(data) {alert('got position')});
+      /*navigator.geolocation.*/getCurrentPosition(
+		function(data) {
+			var ll = new google.maps.LatLng(data.coords.latitude, data.coords.longitude, true)
+			  , marker = new google.maps.Marker({position:ll});
+			marker.setMap(map);
+			map.panTo(ll);
+			map.setZoom(15);
+		}
+		, function() {alert('error')}, {enableHighAccuracy : true}
+	  );
     });
     $('#showQRCode').click( function() {
       $('#qrcode').qrcode("this plugin is great");
     });
-    $('#captureImage').click( function() {
-      captureImage(function(data) {alert('got image')});
+    $('#getPicture').click( function() {
+      getPicture(function(data) {alert('got image')});
     });
   });
 
-  var getCurrentPosition = function(callback) {
-    socket.emit('get-current-position', { foo: 'bar' }, function(data) {
-      console.log(data);
-      callback(data);
-    });
-  };
-
-  var captureImage = function(callback) {
-    console.log('capture image');
-    socket.emit('capture-image', { foo: 'bar' }, function(data) {
-      console.log('capture image before callback');
-      callback(data);
-    });
-  }
+  $(document).ready(function() {
+        map = new google.maps.Map($('#map_canvas')[0], {
+	          center: new google.maps.LatLng(-34.397, 150.644),
+	          zoom: 8,
+	          mapTypeId: google.maps.MapTypeId.ROADMAP
+	        });
+		$('#qrcode').qrcode({ text:'pgproxy://?server='+hostname+':'+port, width: 100, height: 100 })
+		});
     </script>
   </head>
   <body>
-    <div>
-      <a href="#" id="showQRCode">show qr code</a>
-      <div id="qrcode"></div>
-    </div>
-    <li><a href="#" id="getCurrentPosition">navigator.geolocation.getCurrentPosition</a>
-    <li><a href="#" id="captureImage">navigator.device.capture.captureImage</a>
+	<div style="background-color:gray;height:125px;">
+		<div id="qrcode" style="width:100px;height:100px;padding:10px;"></div>
+	</div>
+	<ul>
+    	<li><a href="#" id="getCurrentPosition">navigator.geolocation.getCurrentPosition</a>
+	    <li><a href="#" id="getPicture">navigator.camera.getPicture</a>
+	</ul>
+	<div id="map_canvas" style="width:100%; height:400px"></div>
   </body>
 </html>
